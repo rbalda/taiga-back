@@ -18,8 +18,8 @@
 
 from kombu import Queue
 
-broker_url = 'amqp://guest:guest@localhost:5672//'
-result_backend = 'redis://localhost:6379/0'
+broker_url = 'amqp://taiga:taiga@rabbitmq:5672/taiga'
+result_backend = 'redis://redis:6379/0'
 
 accept_content = ['pickle',] # Values are 'pickle', 'json', 'msgpack' and 'yaml'
 task_serializer = "pickle"
