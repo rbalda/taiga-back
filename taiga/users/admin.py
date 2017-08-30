@@ -115,7 +115,7 @@ class RoleAdmin(admin.ModelAdmin):
 
 class UserAdmin(DjangoUserAdmin):
     fieldsets = (
-        (None, {"fields": ("username", "password")}),
+        (None, {"fields": ("username","email","password")}),
         (_("Personal info"), {"fields": ("full_name", "email", "bio", "photo")}),
         (_("Extra info"), {"fields": ("color", "lang", "timezone", "token", "colorize_tags",
                                       "email_token", "new_email")}),
@@ -123,6 +123,12 @@ class UserAdmin(DjangoUserAdmin):
         (_("Restrictions"), {"fields": (("max_private_projects", "max_memberships_private_projects"),
                                         ("max_public_projects", "max_memberships_public_projects"))}),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+    )
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'password1', 'password2')}
+        ),
     )
     form = UserChangeForm
     add_form = UserCreationForm

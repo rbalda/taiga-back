@@ -19,12 +19,14 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
 from django.contrib.auth.forms import UserChangeForm as DjangoUserChangeForm
-
+from django.utils.translation import ugettext_lazy as _
 
 from .models import User
 
 
 class UserCreationForm(DjangoUserCreationForm):
+    email = forms.EmailField(label=_("Email address"), required=True,
+            help_text=_("Required."))
     def clean_username(self):
         # Since User.username is unique, this check is redundant,
         # but it sets a nicer error message than the ORM. See #13147.
@@ -35,9 +37,25 @@ class UserCreationForm(DjangoUserCreationForm):
             return username
         raise forms.ValidationError(self.error_messages['duplicate_username'])
 
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        try:
+            User._default_manager.get(email=email)
+        except User.DoesNotExist:
+            return email
+        raise email.ValidationError(self.error_messages['duplicate_email'])
+    
+    def save(self,commit=True):
+        user = super(UserCreationForm,self).save(commit=False)
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
+
     class Meta:
         model = User
-        fields = ('username',)
+        fields = ('username','email')
+    
 
 
 class UserChangeForm(DjangoUserChangeForm):
